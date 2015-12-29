@@ -12,27 +12,26 @@ public class MethodParametersParser {
 
     private Method method;
     private MethodParameterInfo[] parameterInfos;
-    
+
     public MethodParametersParser(Method method) {
         this.method = method;
     }
-    
+
     private void init() {
-        
+
         Class<?>[] parameterTypes = this.method.getParameterTypes();
         if (parameterTypes == null || parameterTypes.length == 0) {
         }
-        
-        
+
         Type[] types = this.method.getGenericParameterTypes();
         if (types == null || types.length == 0) {
             return;
         }
-        
+
         for (Type type : types) {
-            
+
             if (type instanceof ParameterizedType) {
-                
+
                 ParameterizedType parameterizedType = (ParameterizedType) type;
                 System.out.println("owner type: " + parameterizedType.getOwnerType());
                 System.out.println("raw type: " + parameterizedType.getRawType());
@@ -43,9 +42,9 @@ public class MethodParametersParser {
             }
         }
     }
-    
+
     public Object[] parse(List<MethodParameterInfo> parameterInfos, Map<String, Long> map) {
-        
+
         return null;
     }
 }
