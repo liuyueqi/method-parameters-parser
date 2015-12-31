@@ -9,6 +9,10 @@ public class BooleanValueParser extends BaseTypeValueParser {
 
     @Override
     public Object parse(String value) {
+        
+        if (value == null) {
+            return null;
+        }
         return Boolean.valueOf(value);
     }
 

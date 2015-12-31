@@ -15,6 +15,10 @@ public class IntegerValueParser extends BaseTypeValueParser {
     @Override
     public Object parse(String value) {
         
+        if (value == null) {
+            return null;
+        }
+        
         try {
             return Integer.valueOf(value);
         } catch (Exception e) {

@@ -15,6 +15,10 @@ public class ShortValueParser extends BaseTypeValueParser {
     @Override
     public Object parse(String value) {
         
+        if (value == null) {
+            return null;
+        }
+        
         try {
             return Short.valueOf(value);
         } catch (Exception e) {

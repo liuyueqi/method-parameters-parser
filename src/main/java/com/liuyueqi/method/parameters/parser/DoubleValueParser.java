@@ -15,6 +15,10 @@ public class DoubleValueParser extends BaseTypeValueParser {
     @Override
     public Object parse(String value) {
         
+        if (value == null) {
+            return null;
+        }
+        
         try {
             return Double.valueOf(value);
         } catch (Exception e) {

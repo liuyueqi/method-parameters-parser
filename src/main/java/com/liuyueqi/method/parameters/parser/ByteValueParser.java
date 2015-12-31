@@ -15,6 +15,10 @@ public class ByteValueParser extends BaseTypeValueParser {
     @Override
     public Object parse(String value) {
         
+        if (value == null) {
+            return null;
+        }
+        
         try {
             return Byte.valueOf(value);
         } catch (Exception e) {

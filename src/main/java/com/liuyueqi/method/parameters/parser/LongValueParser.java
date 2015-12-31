@@ -15,6 +15,10 @@ public class LongValueParser extends BaseTypeValueParser {
     @Override
     public Object parse(String value) {
         
+        if (value == null) {
+            return null;
+        }
+        
         try {
             return Long.valueOf(value);
         } catch (Exception e) {
