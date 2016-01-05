@@ -6,12 +6,12 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import com.liuyueqi.method.parameters.MethodParameterInfo;
+import com.liuyueqi.method.parameters.TypeInfo;
 
 public class MethodParametersParser {
 
     private Method method;
-    private MethodParameterInfo[] parameterInfos;
+    private TypeInfo[] parameterInfos;
 
     public MethodParametersParser(Method method) {
         this.method = method;
@@ -43,7 +43,7 @@ public class MethodParametersParser {
         }
     }
 
-    public Object[] parse(List<MethodParameterInfo> parameterInfos, Map<String, Long> map) {
+    public Object[] parse(List<TypeInfo> parameterInfos, Map<String, Long> map) {
 
         return null;
     }

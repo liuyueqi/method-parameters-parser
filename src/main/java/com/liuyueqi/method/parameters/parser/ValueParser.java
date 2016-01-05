@@ -1,8 +1,10 @@
 package com.liuyueqi.method.parameters.parser;
 
+import com.liuyueqi.method.parameters.TypeInfo;
+
 public interface ValueParser {
 
-    Class<?>[] support();
+    TypeInfo[] support();
     
-    Object parse(String value);
+    Object parse(Object value);
 }

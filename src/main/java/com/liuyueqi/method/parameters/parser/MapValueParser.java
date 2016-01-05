@@ -10,46 +10,42 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.liuyueqi.method.parameters.util.JsonTypeUtil;
+import com.liuyueqi.method.parameters.TypeInfo;
+import com.liuyueqi.method.parameters.parser.factory.BaseValueParserFactory;
 import com.liuyueqi.method.parameters.util.JsonValueUtil;
+import com.liuyueqi.method.parameters.util.TypeInfoUtil;
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 public class MapValueParser implements ValueParser {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MapValueParser.class);
 
-    private Class<?> keyGenericType;
-    private Class<?> valueGenericType;
+    private TypeInfo keyGenericType;
+    private TypeInfo valueGenericType;
     
     public MapValueParser() {
         this(null, null);
     }
 
-    public MapValueParser(Class<?> keyGenericType, Class<?> valueGenericType) {
-        
-        if (keyGenericType == null) {
-            this.keyGenericType = NullType.class;
-        } else {
-            this.keyGenericType = keyGenericType;
-        }
-        
-        if (valueGenericType == null) {
-            this.valueGenericType = NullType.class;
-        } else {
-            this.valueGenericType = valueGenericType;
-        }
+    public MapValueParser(TypeInfo keyGenericType, TypeInfo valueGenericType) {
+        this.keyGenericType = keyGenericType;
+        this.valueGenericType = valueGenericType;
     }
 
     @Override
-    public Class<?>[] support() {
-        return new Class[] { Map.class };
+    public TypeInfo[] support() {
+        return new TypeInfo[0];
     }
 
     @Override
-    public Object parse(String value) {
+    public Object parse(Object value) {
         
         if (value == null) {
             return null;
+        }
+        
+        if (value instanceof Map) {
+            return value;
         }
         
         if (!JsonValueUtil.isMap(value)) {
@@ -58,32 +54,29 @@ public class MapValueParser implements ValueParser {
         }
         
         Map<String, Object> jsonObject = JSON.parseObject(value);
-        if (this.valueGenericType != NullType.class) {
+        if (this.valueGenericType != null) {
             
-            ValueParserFactory factory = DefaultValueParserFactory.getInstance();
-            if (JsonTypeUtil.isBaseType(this.valueGenericType)) {
+            if (TypeInfoUtil.isBaseType(this.valueGenericType)) {
 
-                BaseTypeValueParser parser = factory.getBaseTypeValueParser(this.valueGenericType);
+                ValueParser parser = BaseValueParserFactory.getInstance()
+                        .getValueParser(this.valueGenericType);
+
                 Map<String, Object> copy = new HashMap<String, Object>();
                 for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
                     copy.put(entry.getKey(), parser.parse(entry.getValue() == null ? null : String.valueOf(entry.getValue())));
                 }
                 jsonObject = copy;
             
-            } else if (List.class == this.valueGenericType) {
-                
-                ListValueParser parser = factory.getListValueParser(this.valueGenericType);
-                Map<String, Object> copy = new HashMap<String, Object>();
-                for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
-                    copy.put(entry.getKey(), parser.parse(entry.getValue() == null ? null : String.valueOf(entry.getValue())));
-                }
+            } else if (List.class == this.valueGenericType.getRawType()) {
                 
                 
-            } else if (Set.class == this.valueGenericType) {
                 
-            } else if (Map.class == this.valueGenericType) {
+            } else if (Set.class == this.valueGenericType.getRawType()) {
                 
-                factory.getMapValueParser(null, null);
+                
+                
+            } else if (Map.class == this.valueGenericType.getRawType()) {
+                
                 
             } else {
                 

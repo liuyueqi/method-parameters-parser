@@ -1,14 +1,18 @@
 package com.liuyueqi.method.parameters.parser;
 
-public class StringValueParser extends BaseTypeValueParser {
+import com.liuyueqi.method.parameters.TypeInfo;
+
+public class StringValueParser extends BaseValueParser {
+
+    private static final TypeInfo[] SUPPORTED_TYPES = { TypeInfo.STRING };
 
     @Override
-    public Class<?>[] support() {
-        return new Class[] { String.class };
+    public TypeInfo[] support() {
+        return SUPPORTED_TYPES;
     }
 
     @Override
-    public Object parse(String value) {
+    public Object parse(Object value) {
         return value;
     }
 }
