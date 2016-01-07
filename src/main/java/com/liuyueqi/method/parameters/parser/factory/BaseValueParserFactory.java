@@ -14,6 +14,7 @@ import com.liuyueqi.method.parameters.parser.ShortValueParser;
 import com.liuyueqi.method.parameters.parser.StringValueParser;
 import com.liuyueqi.method.parameters.parser.ValueParser;
 
+@Deprecated
 public class BaseValueParserFactory implements ValueParserFactory {
     
     private static final Map<TypeInfo, BaseValueParser> BASE_VALUE_PARSER_MAP = 
@@ -41,8 +42,7 @@ public class BaseValueParserFactory implements ValueParserFactory {
         
         BaseValueParser parser = BASE_VALUE_PARSER_MAP.get(type);
         if (parser == null) {
-            throw new IllegalArgumentException(String.format(
-                    "Cannot find BaseValueParser for type: %s", type));
+            throw new IllegalArgumentException(String.format("Cannot find BaseValueParser for type: %s", type));
         }
         return parser;
     }
@@ -51,18 +51,4 @@ public class BaseValueParserFactory implements ValueParserFactory {
         private static final BaseValueParserFactory INSTANCE = new BaseValueParserFactory();
     }
 
-    @Override
-    public ValueParser getValueParser(TypeInfo type1, TypeInfo type2) {
-        return null;
-    }
-
-    @Override
-    public ValueParser getValueParser(TypeInfo type1, TypeInfo type2, TypeInfo type3) {
-        return null;
-    }
-
-    @Override
-    public ValueParser getValueParser(TypeInfo... types) {
-        return null;
-    }
 }

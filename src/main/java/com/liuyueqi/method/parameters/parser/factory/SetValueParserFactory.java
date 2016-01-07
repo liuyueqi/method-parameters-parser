@@ -7,6 +7,7 @@ import com.liuyueqi.method.parameters.TypeInfo;
 import com.liuyueqi.method.parameters.parser.SetValueParser;
 import com.liuyueqi.method.parameters.parser.ValueParser;
 
+@Deprecated
 public class SetValueParserFactory implements ValueParserFactory {
 
     private static final ConcurrentHashMap<TypeInfo, SetValueParser> SET_VALUE_PARSER_MAP = 
@@ -44,21 +45,6 @@ public class SetValueParserFactory implements ValueParserFactory {
 
     private static class Holder {
         private static final SetValueParserFactory INSTANCE = new SetValueParserFactory();
-    }
-
-    @Override
-    public ValueParser getValueParser(TypeInfo type1, TypeInfo type2) {
-        return null;
-    }
-
-    @Override
-    public ValueParser getValueParser(TypeInfo type1, TypeInfo type2, TypeInfo type3) {
-        return null;
-    }
-
-    @Override
-    public ValueParser getValueParser(TypeInfo... types) {
-        return null;
     }
 
 }

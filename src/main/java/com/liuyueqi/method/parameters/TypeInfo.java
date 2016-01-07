@@ -1,5 +1,8 @@
 package com.liuyueqi.method.parameters;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -25,16 +28,41 @@ public class TypeInfo {
     private Class<?> rawType;
     private TypeInfo[] genericTypes;
 
-    public TypeInfo(Class<?> rawType) {
-        this(rawType, null);
-    }
-
     public TypeInfo(Class<?> rawType, TypeInfo[] genericTypes) {
+        setRawType(rawType);
+        setGenericTypes(genericTypes);
+    }
+    
+    public TypeInfo(Type type) {
+        
+        if (type instanceof Class) {
+            setRawType((Class<?>) type);
+            setGenericTypes(null);
+        } else if (type instanceof ParameterizedType) {
+            
+            ParameterizedType pt = (ParameterizedType) type;
+            setRawType((Class<?>) pt.getRawType());
+            
+            Type[] actualTypeArguments = pt.getActualTypeArguments();
+            TypeInfo[] genericTypes = new TypeInfo[actualTypeArguments.length];
+            int index = 0;
+            for (Type t : actualTypeArguments) {
+                genericTypes[index++] = new TypeInfo(t);
+            }
+            setGenericTypes(genericTypes);
+        }
+    }
+    
+    private void setRawType(Class<?> rawType) {
         
         if (rawType == null) {
             throw new IllegalArgumentException("Raw type of TypeInfo cannot be null");
         }
         this.rawType = rawType;
+    }
+    
+    private void setGenericTypes(TypeInfo[] genericTypes) {
+        
         if (genericTypes == null) {
             this.genericTypes = new TypeInfo[0];
         } else {

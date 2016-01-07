@@ -1,15 +1,18 @@
 package com.liuyueqi.method.parameters.parser;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.liuyueqi.method.parameters.TypeInfo;
-import com.liuyueqi.method.parameters.util.JsonValueUtil;
+import com.liuyueqi.method.parameters.parser.factory.CommonValueParserFactory;
+import com.liuyueqi.method.parameters.util.JsonValueUtils;
 
 public class PojoValueParser implements ValueParser {
 
@@ -33,49 +36,66 @@ public class PojoValueParser implements ValueParser {
     @Override
     @SuppressWarnings("unchecked")
     public Object parse(Object value) {
-        
+
         if (value == null) {
             return null;
         }
-        
-        if (value.getClass() == type.getRawType()) {
+
+        if (value.getClass() == this.type.getRawType()) {
             return value;
         }
-        
+
         if (value instanceof String) {
             return parseString((String) value);
         }
-        
+
         if (value instanceof Map) {
             return parseMap((Map<String, ?>) value);
         }
-        
+
         throw new IllegalArgumentException("");
     }
-    
+
     private Object parseString(String value) {
-        
-        if (!JsonValueUtil.isMap(value)) {
+
+        if (!JsonValueUtils.isMap(value)) {
             LOGGER.error(String.format("%s cannot be parsed to type: %s", value, this.type));
         }
-        return JSON.parseObject(value, this.type.getRawType());
+        return parseMap(JSON.parseObject(value));
     }
-    
+
     private Object parseMap(Map<String, ?> value) {
-        
+
         try {
             
-            Object instance = type.getRawType().newInstance();
-            BeanUtils.populate(instance, value);
+            Class<?> rawType = this.type.getRawType();
+            Object instance = rawType.newInstance();
+            
+            Field[] fields = rawType.getFields();
+            for (Field field : fields) {
+                
+                TypeInfo typeInfo = new TypeInfo(field.getGenericType());
+                ValueParser parser = CommonValueParserFactory.getInstance().getValueParser(typeInfo);
+
+                String fieldName = field.getName();
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(fieldName, rawType);
+                propertyDescriptor.getWriteMethod().invoke(instance, parser.parse(value.get(fieldName)));
+            }
+            
             return instance;
-        
+            
+        } catch (InstantiationException e) {
+            e.printStackTrace();
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IntrospectionException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
         }
+        
         return null;
     }
 }

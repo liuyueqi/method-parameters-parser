@@ -7,11 +7,11 @@ import com.liuyueqi.method.parameters.TypeInfo;
 import com.liuyueqi.method.parameters.parser.ListValueParser;
 import com.liuyueqi.method.parameters.parser.ValueParser;
 
+@Deprecated
 public class ListValueParserFactory implements ValueParserFactory {
 
-    private static final ConcurrentHashMap<TypeInfo, ListValueParser> LIST_VALUE_PARSER_MAP = 
-            new ConcurrentHashMap<TypeInfo, ListValueParser>();
-    
+    private static final ConcurrentHashMap<TypeInfo, ListValueParser> LIST_VALUE_PARSER_MAP = new ConcurrentHashMap<TypeInfo, ListValueParser>();
+
     private static final TypeInfo NO_GENERIC_TYPE = new TypeInfo(List.class);
 
     private ListValueParserFactory() {
@@ -33,7 +33,7 @@ public class ListValueParserFactory implements ValueParserFactory {
             return LIST_VALUE_PARSER_MAP.get(type);
         }
 
-        ListValueParser parser = new ListValueParser(type);        
+        ListValueParser parser = new ListValueParser(type);
         ListValueParser previousParser = LIST_VALUE_PARSER_MAP.putIfAbsent(type, parser);
         if (previousParser == null) {
             return parser;
@@ -46,18 +46,4 @@ public class ListValueParserFactory implements ValueParserFactory {
         private static final ListValueParserFactory INSTANCE = new ListValueParserFactory();
     }
 
-    @Override
-    public ValueParser getValueParser(TypeInfo type1, TypeInfo type2) {
-        return null;
-    }
-
-    @Override
-    public ValueParser getValueParser(TypeInfo type1, TypeInfo type2, TypeInfo type3) {
-        return null;
-    }
-
-    @Override
-    public ValueParser getValueParser(TypeInfo... types) {
-        return null;
-    }
 }

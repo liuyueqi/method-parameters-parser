@@ -1,6 +1,6 @@
 package com.liuyueqi.method.parameters.util;
 
-public class JsonValueUtil {
+public class JsonValueUtils {
 
     public static boolean isArray(String value) {
         
