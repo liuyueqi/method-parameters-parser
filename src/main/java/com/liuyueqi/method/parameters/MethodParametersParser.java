@@ -5,7 +5,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.ComparatorUtils;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 
@@ -13,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.liuyueqi.method.parameters.exception.ValueParseException;
 import com.liuyueqi.method.parameters.parser.CommonValueParserFactory;
 import com.liuyueqi.method.parameters.parser.ValueParser;
+import com.liuyueqi.method.parameters.parser.ValueParserFactory;
 import com.liuyueqi.method.parameters.util.JsonValueUtils;
 import com.liuyueqi.method.parameters.util.TypeInfoUtils;
 
@@ -81,7 +81,7 @@ public class MethodParametersParser {
 
     private Object[] parseMap(Map<String, ?> value) {
 
-        CommonValueParserFactory factory = CommonValueParserFactory.getInstance();
+        ValueParserFactory factory = CommonValueParserFactory.getInstance();
 
         if (this.methodParameterInfos.length == 1) {
             ValueParser parser = factory.getValueParser(this.methodParameterInfos[0].getType());
@@ -100,7 +100,7 @@ public class MethodParametersParser {
 
     private Object[] parseArray(List<?> array) {
 
-        CommonValueParserFactory factory = CommonValueParserFactory.getInstance();
+        ValueParserFactory factory = CommonValueParserFactory.getInstance();
         
         if (this.methodParameterInfos.length == 1) {
             
