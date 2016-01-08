@@ -6,6 +6,8 @@ import java.lang.reflect.Type;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import com.liuyueqi.method.parameters.exception.ValueParseException;
+
 @EqualsAndHashCode(of = {"rawType", "genericTypes"})
 @Getter
 public class TypeInfo {
@@ -28,7 +30,7 @@ public class TypeInfo {
     private Class<?> rawType;
     private TypeInfo[] genericTypes;
 
-    public TypeInfo(Class<?> rawType, TypeInfo[] genericTypes) {
+    public TypeInfo(Class<?> rawType, TypeInfo... genericTypes) {
         setRawType(rawType);
         setGenericTypes(genericTypes);
     }
@@ -56,7 +58,7 @@ public class TypeInfo {
     private void setRawType(Class<?> rawType) {
         
         if (rawType == null) {
-            throw new IllegalArgumentException("Raw type of TypeInfo cannot be null");
+            throw new ValueParseException("Raw type of TypeInfo cannot be null");
         }
         this.rawType = rawType;
     }

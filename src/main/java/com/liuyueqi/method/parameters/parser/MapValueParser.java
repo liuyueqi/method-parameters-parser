@@ -1,19 +1,15 @@
 package com.liuyueqi.method.parameters.parser;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.liuyueqi.method.parameters.TypeInfo;
+import com.liuyueqi.method.parameters.exception.ValueParseException;
 import com.liuyueqi.method.parameters.util.JsonValueUtils;
-import com.liuyueqi.method.parameters.util.TypeInfoUtils;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 public class MapValueParser implements ValueParser {
     
@@ -52,7 +48,7 @@ public class MapValueParser implements ValueParser {
             return parseMap((Map<String, ?>) value);
         }
 
-        throw new IllegalArgumentException("");
+        throw new ValueParseException("");
     }
     
     private Object parserString(String value) {
@@ -75,18 +71,29 @@ public class MapValueParser implements ValueParser {
             return value;
         }
         
-        Map<Object, Object> result = new HashMap<Object, Object>();
-        return result;
-    }
-
-    public static void main(String[] args) {
+        CommonValueParserFactory factory = CommonValueParserFactory.getInstance();
         
-        JSONObject jsonObject = JSON.parseObject("{{'a': 1}: 100, {'a': 2}: 200}");
-        Iterator<String> iterator = jsonObject.keySet().iterator();
-        while (iterator.hasNext()) {
-            Object key = iterator.next();
-            System.out.println(key.getClass());
-            System.out.println(jsonObject.get(key).getClass());
+        Map<Object, Object> result = new HashMap<Object, Object>();
+        for (Map.Entry<String, ?> entry : value.entrySet()) {
+            
+            Object key = null;
+            if (this.keyGenericType == null) {
+                key = entry.getKey();
+            } else {
+                ValueParser parser = factory.getValueParser(this.keyGenericType);
+                key = parser.parse(entry.getKey());
+            }
+            
+            Object val = null;
+            if (this.valueGenericType == null) {
+                val = entry.getValue();
+            } else {
+                ValueParser parser = factory.getValueParser(this.valueGenericType);
+                val = parser.parse(entry.getValue());
+            }
+            
+            result.put(key, val);
         }
+        return result;
     }
 }

@@ -1,23 +1,11 @@
-package com.liuyueqi.method.parameters.parser.factory;
+package com.liuyueqi.method.parameters.parser;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.liuyueqi.method.parameters.TypeInfo;
-import com.liuyueqi.method.parameters.parser.BaseValueParser;
-import com.liuyueqi.method.parameters.parser.BooleanValueParser;
-import com.liuyueqi.method.parameters.parser.ByteValueParser;
-import com.liuyueqi.method.parameters.parser.DoubleValueParser;
-import com.liuyueqi.method.parameters.parser.IntegerValueParser;
-import com.liuyueqi.method.parameters.parser.ListValueParser;
-import com.liuyueqi.method.parameters.parser.LongValueParser;
-import com.liuyueqi.method.parameters.parser.MapValueParser;
-import com.liuyueqi.method.parameters.parser.PojoValueParser;
-import com.liuyueqi.method.parameters.parser.SetValueParser;
-import com.liuyueqi.method.parameters.parser.ShortValueParser;
-import com.liuyueqi.method.parameters.parser.StringValueParser;
-import com.liuyueqi.method.parameters.parser.ValueParser;
+import com.liuyueqi.method.parameters.exception.ValueParseException;
 import com.liuyueqi.method.parameters.util.TypeInfoUtils;
 
 public class CommonValueParserFactory implements ValueParserFactory {
@@ -56,14 +44,15 @@ public class CommonValueParserFactory implements ValueParserFactory {
     public ValueParser getValueParser(TypeInfo type) {
         
         if (type == null) {
-            throw new IllegalArgumentException(String.format("Cannot find ValueParser for type: %s", type));
+            throw new ValueParseException("TypeInfo cannot be null");
         }
         
         if (TypeInfoUtils.isBaseType(type)) {
             BaseValueParser parser = BASE_VALUE_PARSER_MAP.get(type);
             if (parser == null) {
-                throw new IllegalArgumentException(String.format("Cannot find BaseValueParser for type: %s", type));
+                throw new ValueParseException(String.format("Cannot find BaseValueParser for type: %s", type));
             }
+            return parser;
         }
         
         if (TypeInfoUtils.isList(type)) {

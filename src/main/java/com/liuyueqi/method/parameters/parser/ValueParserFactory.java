@@ -1,7 +1,6 @@
-package com.liuyueqi.method.parameters.parser.factory;
+package com.liuyueqi.method.parameters.parser;
 
 import com.liuyueqi.method.parameters.TypeInfo;
-import com.liuyueqi.method.parameters.parser.ValueParser;
 
 public interface ValueParserFactory {
 

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.liuyueqi.method.parameters.TypeInfo;
-import com.liuyueqi.method.parameters.parser.factory.CommonValueParserFactory;
+import com.liuyueqi.method.parameters.exception.ValueParseException;
 import com.liuyueqi.method.parameters.util.JsonValueUtils;
 
 public class ListValueParser extends CollectionValueParser {
@@ -45,7 +45,7 @@ public class ListValueParser extends CollectionValueParser {
             return parseString((String) value);
         }
         
-        throw new IllegalArgumentException("");
+        throw new ValueParseException("");
     }
 
     private Object parseString(String value) {

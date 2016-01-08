@@ -1,7 +1,5 @@
 package com.liuyueqi.method.parameters.parser;
 
-import java.util.Collection;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -18,10 +16,5 @@ public abstract class CollectionValueParser implements ValueParser {
 
     public CollectionValueParser(TypeInfo genericType) {
         this.genericType = genericType;
-    }
-    
-    protected Object parse(Collection<?> value) {
-        
-        return null;
     }
 }
