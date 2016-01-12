@@ -52,4 +52,8 @@ public class TypeInfoUtils {
         
         return (Map.class == type.getRawType());
     }
+    
+    public static boolean isPojo(TypeInfo type) {
+        return !(isBaseType(type) || isList(type) || isSet(type) || isMap(type));
+    }
 }

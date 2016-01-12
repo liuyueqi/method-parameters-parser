@@ -83,7 +83,9 @@ public class MethodParametersParser {
 
         ValueParserFactory factory = CommonValueParserFactory.getInstance();
 
-        if (this.methodParameterInfos.length == 1) {
+        if (this.methodParameterInfos.length == 1 
+                && TypeInfoUtils.isPojo(this.methodParameterInfos[0].getType())) {
+            
             ValueParser parser = factory.getValueParser(this.methodParameterInfos[0].getType());
             return new Object[] { parser.parse(value) };
         }
@@ -91,9 +93,8 @@ public class MethodParametersParser {
         Object[] result = new Object[this.methodParameterInfos.length];
         int index = 0;
         for (MethodParameterInfo info : this.methodParameterInfos) {
-            
             ValueParser parser = factory.getValueParser(info.getType());
-            result[index] = parser.parse(value.get(info.getName()));
+            result[index++] = parser.parse(value.get(info.getName()));
         }
         return result;
     }
