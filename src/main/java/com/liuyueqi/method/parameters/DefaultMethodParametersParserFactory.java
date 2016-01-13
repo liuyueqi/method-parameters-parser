@@ -7,8 +7,8 @@ import com.liuyueqi.method.parameters.exception.ValueParseException;
 
 public class DefaultMethodParametersParserFactory implements MethodParametersParserFactory {
     
-    private static final ConcurrentHashMap<Method, MethodParametersParser> METHOD_PARAMETERS_PARSER_MAP = 
-            new ConcurrentHashMap<Method, MethodParametersParser>();
+    private static final ConcurrentHashMap<Method, DefaultMethodParametersParser> METHOD_PARAMETERS_PARSER_MAP = 
+            new ConcurrentHashMap<Method, DefaultMethodParametersParser>();
     
     public static DefaultMethodParametersParserFactory getInstance() {
         return Holder.INSTANCE;
@@ -28,8 +28,8 @@ public class DefaultMethodParametersParserFactory implements MethodParametersPar
             return METHOD_PARAMETERS_PARSER_MAP.get(method);
         }
         
-        MethodParametersParser parser = new MethodParametersParser(method);
-        MethodParametersParser previousParser = METHOD_PARAMETERS_PARSER_MAP.putIfAbsent(method, parser);
+        DefaultMethodParametersParser parser = new DefaultMethodParametersParser(method);
+        DefaultMethodParametersParser previousParser = METHOD_PARAMETERS_PARSER_MAP.putIfAbsent(method, parser);
         if (previousParser == null) {
             return parser;
         }

@@ -51,7 +51,7 @@ public class MapValueParser implements ValueParser {
         throw new ValueParseException("");
     }
     
-    private Object parserString(String value) {
+    private Map<?, ?> parserString(String value) {
         
         if (!JsonValueUtils.isMap(value)) {
             LOGGER.error(String.format("%s is not a map", value));
@@ -61,7 +61,7 @@ public class MapValueParser implements ValueParser {
         return parseMap(JSON.parseObject(value));
     }
     
-    private Object parseMap(Map<String, ?> value) {
+    private Map<?, ?> parseMap(Map<String, ?> value) {
         
         if (value.isEmpty()) {
             return value;

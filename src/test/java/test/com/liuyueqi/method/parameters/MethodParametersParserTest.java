@@ -3,12 +3,10 @@ package test.com.liuyueqi.method.parameters;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import lombok.Getter;
-import lombok.Setter;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -256,10 +254,11 @@ public class MethodParametersParserTest {
             Assert.assertNotNull(item);
             Assert.assertTrue(item instanceof Map);
             
+            @SuppressWarnings("unchecked")
             Map<String, Object> map = (Map<String, Object>) item;
-            Assert.assertEquals(testInfos.get(index).getS(), map.get("s"));
-            Assert.assertEquals(testInfos.get(index).getI(), map.get("i"));
-            Assert.assertEquals(testInfos.get(index).getDd().toString(), map.get("dd").toString());
+            Assert.assertEquals(map.get("s"), testInfos.get(index).getS());
+            Assert.assertEquals(map.get("i"), testInfos.get(index).getI());
+            Assert.assertEquals(map.get("dd").toString(), testInfos.get(index).getDd().toString());
             index++;
         }
     }
@@ -309,6 +308,206 @@ public class MethodParametersParserTest {
             index++;
         }
     }
+    
+    @Test
+    public void testSingleDoubleList() throws Exception {
+        
+        DefaultMethodParametersParserFactory factory = DefaultMethodParametersParserFactory.getInstance();
+
+        Method method = this.methodMap.get("singleDoubleList");
+        MethodParametersParser parser = factory.getMethodParametersParser(method);
+        
+        Double[] param = new Double[] {12.34D, 43.21D, 8.8D};
+        Object[] result = parser.parse(JSON.toJSONString(param));
+
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.length, 1);
+        
+        List<?> list = (List<?>) result[0];
+        int index = 0;
+        for (Object item : list) {
+            Assert.assertNotNull(item);
+            Assert.assertEquals(item, param[index]);
+            index++;
+        }
+    }
+
+    @Test
+    public void testSinglePojoList() throws Exception {
+        
+        DefaultMethodParametersParserFactory factory = DefaultMethodParametersParserFactory.getInstance();
+
+        Method method = this.methodMap.get("singlePojoList");
+        MethodParametersParser parser = factory.getMethodParametersParser(method);
+        
+        List<TestInfo> testInfos = new ArrayList<TestInfo>();
+        for (int i = 0; i < 5; i++) {
+            TestInfo testInfo = new TestInfo();
+            testInfo.setS("abc" + i);
+            testInfo.setI(i);
+            testInfo.setDd(i + 0.5);
+            testInfos.add(testInfo);
+        }
+        Object[] result = parser.parse(JSON.toJSONString(testInfos));
+
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.length, 1);
+        
+        List<?> list = (List<?>) result[0];
+        int index = 0;
+        for (Object item : list) {
+            
+            Assert.assertNotNull(item);
+            Assert.assertTrue(item instanceof TestInfo);
+            
+            TestInfo testInfo = (TestInfo) item;
+            Assert.assertEquals(testInfo.getS(), testInfos.get(index).getS());
+            Assert.assertEquals(testInfo.getI(), testInfos.get(index).getI());
+            Assert.assertEquals(testInfo.getDd(), testInfos.get(index).getDd());
+            index++;
+        }
+    }
+    
+    @Test
+    public void testSingleSet() throws Exception {
+        
+        DefaultMethodParametersParserFactory factory = DefaultMethodParametersParserFactory.getInstance();
+
+        Method method = this.methodMap.get("singleSet");
+        MethodParametersParser parser = factory.getMethodParametersParser(method);
+        
+        Object[] param = new Object[] {"abc", 123, 12.34D, true};
+        Object[] result = parser.parse(JSON.toJSONString(param));
+        
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.length, 1);
+        
+        Set<?> set = (Set<?>) result[0];
+        for (Object item : param) {
+            Assert.assertNotNull(item);
+        }
+        
+        Set<TestInfo> testInfos = new HashSet<TestInfo>();
+        for (int i = 0; i < 5; i++) {
+            TestInfo testInfo = new TestInfo();
+            testInfo.setS("abc" + i);
+            testInfo.setI(i);
+            testInfo.setDd(i + 0.5);
+            testInfos.add(testInfo);
+        }
+        
+        result = parser.parse(JSON.toJSONString(testInfos));
+        
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.length, 1);
+        
+        set = (Set<?>) result[0];
+        for (Object item : set) {
+            
+            Assert.assertNotNull(item);
+            Assert.assertTrue(item instanceof Map);
+            
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) item;
+            Assert.assertNotNull(map.get("s"));
+            Assert.assertNotNull(map.get("i"));
+            Assert.assertNotNull(map.get("dd"));
+        }
+    }
+
+    @Test
+    public void testSingleStringSet() throws Exception {
+        
+        DefaultMethodParametersParserFactory factory = DefaultMethodParametersParserFactory.getInstance();
+
+        Method method = this.methodMap.get("singleStringSet");
+        MethodParametersParser parser = factory.getMethodParametersParser(method);
+        
+        String[] param = new String[] {"abc", "def", "xyz"};
+        Object[] result = parser.parse(JSON.toJSONString(param));
+
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.length, 1);
+        
+        Set<?> set = (Set<?>) result[0];
+        for (Object item : param) {
+            Assert.assertTrue(set.contains(item));
+        }
+    }
+
+    @Test
+    public void testSingleIntegerSet() throws Exception {
+        
+        DefaultMethodParametersParserFactory factory = DefaultMethodParametersParserFactory.getInstance();
+
+        Method method = this.methodMap.get("singleIntegerSet");
+        MethodParametersParser parser = factory.getMethodParametersParser(method);
+        
+        Integer[] param = new Integer[] {100, 200, 300};
+        Object[] result = parser.parse(JSON.toJSONString(param));
+
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.length, 1);
+        
+        Set<?> set = (Set<?>) result[0];
+        for (Object item : param) {
+            Assert.assertTrue(set.contains(item));
+        }
+    }
+    
+    @Test
+    public void testSingleDoubleSet() throws Exception {
+        
+        DefaultMethodParametersParserFactory factory = DefaultMethodParametersParserFactory.getInstance();
+
+        Method method = this.methodMap.get("singleDoubleSet");
+        MethodParametersParser parser = factory.getMethodParametersParser(method);
+        
+        Double[] param = new Double[] {12.34D, 43.21D, 8.8D};
+        Object[] result = parser.parse(JSON.toJSONString(param));
+
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.length, 1);
+        
+        Set<?> set = (Set<?>) result[0];
+        for (Object item : param) {
+            Assert.assertTrue(set.contains(item));
+        }
+    }
+
+    @Test
+    public void testSinglePojoSet() throws Exception {
+        
+        DefaultMethodParametersParserFactory factory = DefaultMethodParametersParserFactory.getInstance();
+
+        Method method = this.methodMap.get("singlePojoSet");
+        MethodParametersParser parser = factory.getMethodParametersParser(method);
+        
+        Set<TestInfo> testInfos = new HashSet<TestInfo>();
+        for (int i = 0; i < 5; i++) {
+            TestInfo testInfo = new TestInfo();
+            testInfo.setS("abc" + i);
+            testInfo.setI(i);
+            testInfo.setDd(i + 0.5);
+            testInfos.add(testInfo);
+        }
+        Object[] result = parser.parse(JSON.toJSONString(testInfos));
+
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.length, 1);
+        
+        Set<?> list = (Set<?>) result[0];
+        for (Object item : list) {
+            
+            Assert.assertNotNull(item);
+            Assert.assertTrue(item instanceof TestInfo);
+            
+            TestInfo testInfo = (TestInfo) item;
+            Assert.assertNotNull(testInfo.getS());
+            Assert.assertNotNull(testInfo.getI());
+            Assert.assertNotNull(testInfo.getDd());
+        }
+    }
 }
 
 class TestService {
@@ -341,6 +540,7 @@ class TestService {
         return new Object[] { arg1, arg2 };
     }
     
+    @SuppressWarnings("rawtypes")
     public List<?> singleList(List list) {
         return list;
     }
@@ -357,11 +557,12 @@ class TestService {
         return list;
     }
     
-    public List<TestInfo> singleTestInfoList(List<TestInfo> list) {
+    public List<TestInfo> singlePojoList(List<TestInfo> list) {
         return list;
     }
     
-    public Set<?> singleObjectSet(Set set) {
+    @SuppressWarnings("rawtypes")
+    public Set<?> singleSet(Set set) {
         return set;
     }
     
@@ -377,34 +578,7 @@ class TestService {
         return set;
     }
 
-    public Set<TestInfo> singleTestInfoSet(Set<TestInfo> set) {
+    public Set<TestInfo> singlePojoSet(Set<TestInfo> set) {
         return set;
     }
-}
-
-@Getter
-@Setter
-class TestInfo {
-
-    private String s;
-    
-    private Long ll;
-    private long l;
-    
-    private Integer ii;
-    private int i;
-    
-    private Double dd;
-    private double d;
-    
-    private Boolean bb;
-    private boolean b;
-    
-    private List list;
-    private List<String> sList;
-    private List<TestInfo> testList;
-    
-    private Map map;
-    private Map<String, Long> slMap;
-    private Map<String, TestInfo> testMap;
 }

@@ -71,15 +71,23 @@ public class PojoValueParser implements ValueParser {
             Class<?> rawType = this.type.getRawType();
             Object instance = rawType.newInstance();
             
-            Field[] fields = rawType.getFields();
-            for (Field field : fields) {
+            for (Map.Entry<String, ?> entry : value.entrySet()) {
                 
-                TypeInfo typeInfo = new TypeInfo(field.getGenericType());
-                ValueParser parser = CommonValueParserFactory.getInstance().getValueParser(typeInfo);
-
-                String fieldName = field.getName();
-                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(fieldName, rawType);
-                propertyDescriptor.getWriteMethod().invoke(instance, parser.parse(value.get(fieldName)));
+                try {
+                    
+                    Field field = rawType.getDeclaredField(entry.getKey());
+                    TypeInfo typeInfo = new TypeInfo(field.getGenericType());
+                    
+                    ValueParser parser = CommonValueParserFactory.getInstance().getValueParser(typeInfo);
+                    
+                    PropertyDescriptor propertyDescriptor = new PropertyDescriptor(entry.getKey(), rawType);
+                    propertyDescriptor.getWriteMethod().invoke(instance, parser.parse(entry.getValue()));
+                    
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
             }
             
             return instance;
