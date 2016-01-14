@@ -1,24 +1,24 @@
 package test.com.liuyueqi.method.parameters;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class TestInfo {
 
     private String s;
 
-    private Long ll;
-    private long l;
-
     private Integer ii;
     private int i;
+
+    private Long ll;
+    private long l;
 
     private Double dd;
     private double d;
@@ -35,11 +35,4 @@ public class TestInfo {
     private Map map;
     private Map<String, Long> slMap;
     private Map<String, TestInfo> testMap;
-    
-    public static void main(String[] args) throws Exception {
-        
-        PropertyDescriptor pd = new PropertyDescriptor("s", TestInfo.class);
-        Method readMethod = pd.getReadMethod();
-        System.out.println(readMethod);
-    }
 }
