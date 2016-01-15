@@ -17,6 +17,7 @@ import com.liuyueqi.method.parameters.util.JsonValueUtils;
 public class PojoValueParser implements ValueParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PojoValueParser.class);
+    private static final TypeInfo[] SUPPORTED_TYPES = new TypeInfo[0];
 
     private TypeInfo type;
 
@@ -30,7 +31,7 @@ public class PojoValueParser implements ValueParser {
 
     @Override
     public TypeInfo[] support() {
-        return new TypeInfo[0];
+        return SUPPORTED_TYPES;
     }
 
     @Override

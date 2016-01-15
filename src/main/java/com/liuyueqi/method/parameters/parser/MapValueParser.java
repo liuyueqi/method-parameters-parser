@@ -12,8 +12,9 @@ import com.liuyueqi.method.parameters.exception.ValueParseException;
 import com.liuyueqi.method.parameters.util.JsonValueUtils;
 
 public class MapValueParser implements ValueParser {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MapValueParser.class);
+    private static final TypeInfo[] SUPPORTED_TYPES = new TypeInfo[0];
 
     private TypeInfo keyGenericType;
     private TypeInfo valueGenericType;
@@ -29,7 +30,7 @@ public class MapValueParser implements ValueParser {
 
     @Override
     public TypeInfo[] support() {
-        return new TypeInfo[0];
+        return SUPPORTED_TYPES;
     }
 
     @Override

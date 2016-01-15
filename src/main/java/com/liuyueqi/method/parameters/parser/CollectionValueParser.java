@@ -11,6 +11,8 @@ import com.liuyueqi.method.parameters.TypeInfo;
 
 public abstract class CollectionValueParser implements ValueParser {
 
+    private static final TypeInfo[] SUPPORTED_TYPES = new TypeInfo[0];
+
     @Getter(AccessLevel.PROTECTED)
     private TypeInfo genericType;
     
@@ -20,6 +22,11 @@ public abstract class CollectionValueParser implements ValueParser {
 
     public CollectionValueParser(TypeInfo genericType) {
         this.genericType = genericType;
+    }
+
+    @Override
+    public TypeInfo[] support() {
+        return SUPPORTED_TYPES;
     }
     
     protected List<?> parseCollection(Collection<?> collection) {

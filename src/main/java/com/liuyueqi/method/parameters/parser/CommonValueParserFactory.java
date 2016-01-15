@@ -25,6 +25,8 @@ public class CommonValueParserFactory implements ValueParserFactory {
     private static final ConcurrentHashMap<TypeInfo, PojoValueParser> POJO_VALUE_PARSER_MAP = 
             new ConcurrentHashMap<TypeInfo, PojoValueParser>();
     
+    private static final ObjectValueParser OBJECT_VALUE_PARSER = new ObjectValueParser();
+    
     public static CommonValueParserFactory getInstance() {
         return Holder.INSTANCE;
     }
@@ -72,6 +74,10 @@ public class CommonValueParserFactory implements ValueParserFactory {
         
         if (TypeInfoUtils.isMap(type)) {
             return lookupMapValueParser(type);
+        }
+        
+        if (Object.class == type.getRawType()) {
+            return OBJECT_VALUE_PARSER;
         }
         
         return lookupPojoValueParser(type);

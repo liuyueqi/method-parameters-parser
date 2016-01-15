@@ -25,11 +25,6 @@ public class SetValueParser extends CollectionValueParser {
     }
 
     @Override
-    public TypeInfo[] support() {
-        return new TypeInfo[0];
-    }
-
-    @Override
     public Object parse(Object value) {
 
         if (value == null) {

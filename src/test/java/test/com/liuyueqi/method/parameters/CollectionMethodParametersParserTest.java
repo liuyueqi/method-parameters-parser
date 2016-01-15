@@ -2,6 +2,7 @@ package test.com.liuyueqi.method.parameters;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,28 +23,17 @@ public class CollectionMethodParametersParserTest extends AbstractMethodParamete
     }
 
     @Test
-    public void testSingleList() {
+    public void testSingleObjectList() {
 
         DefaultMethodParametersParserFactory factory = DefaultMethodParametersParserFactory.getInstance();
 
-        Method method = lookupMethod("singleList");
+        Method method = lookupMethod("singleObjectList");
         MethodParametersParser parser = factory.getMethodParametersParser(method);
 
-        Object[] param = new Object[] { "abc", 123, 12.34D, true };
-        Object[] result = parser.parse(JSON.toJSONString(param));
+        // 基本类型List
+        testSingleListParam(parser, Arrays.asList(new Object[] { "abc", 123, true }));
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.length, 1);
-        Assert.assertTrue(result[0] instanceof List);
-
-        List<?> list = (List<?>) result[0];
-        int index = 0;
-        for (Object item : list) {
-            Assert.assertNotNull(item);
-            Assert.assertEquals(item.toString(), param[index].toString());
-            index++;
-        }
-
+        // 对象List
         List<TestInfo> testInfos = new ArrayList<TestInfo>();
         for (int i = 0; i < 5; i++) {
             TestInfo testInfo = new TestInfo();
@@ -53,14 +43,14 @@ public class CollectionMethodParametersParserTest extends AbstractMethodParamete
             testInfos.add(testInfo);
         }
 
-        result = parser.parse(JSON.toJSONString(testInfos));
+        Object[] result = parser.parse(JSON.toJSONString(testInfos));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.length, 1);
         Assert.assertTrue(result[0] instanceof List);
 
-        list = (List<?>) result[0];
-        index = 0;
+        List<?> list = (List<?>) result[0];
+        int index = 0;
         for (Object item : list) {
 
             Assert.assertNotNull(item);
@@ -83,21 +73,7 @@ public class CollectionMethodParametersParserTest extends AbstractMethodParamete
         Method method = lookupMethod("singleStringList");
         MethodParametersParser parser = factory.getMethodParametersParser(method);
 
-        String[] param = new String[] { "abc", "def", "xyz" };
-        String json = JSON.toJSONString(param);
-        Object[] result = parser.parse(json);
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.length, 1);
-        Assert.assertTrue(result[0] instanceof List);
-
-        List<?> list = (List<?>) result[0];
-        int index = 0;
-        for (Object item : list) {
-            Assert.assertNotNull(item);
-            Assert.assertEquals(item, param[index]);
-            index++;
-        }
+        testSingleListParam(parser, Arrays.asList(new String[] { "abc", "def", "xyz" }));
     }
 
     @Test
@@ -108,20 +84,7 @@ public class CollectionMethodParametersParserTest extends AbstractMethodParamete
         Method method = lookupMethod("singleIntegerList");
         MethodParametersParser parser = factory.getMethodParametersParser(method);
 
-        Integer[] param = new Integer[] { 100, 200, 300 };
-        Object[] result = parser.parse(JSON.toJSONString(param));
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.length, 1);
-        Assert.assertTrue(result[0] instanceof List);
-
-        List<?> list = (List<?>) result[0];
-        int index = 0;
-        for (Object item : list) {
-            Assert.assertNotNull(item);
-            Assert.assertEquals(item, param[index]);
-            index++;
-        }
+        testSingleListParam(parser, Arrays.asList(new Integer[] { 100, 200, 300 }));
     }
 
     @Test
@@ -132,20 +95,7 @@ public class CollectionMethodParametersParserTest extends AbstractMethodParamete
         Method method = lookupMethod("singleDoubleList");
         MethodParametersParser parser = factory.getMethodParametersParser(method);
 
-        Double[] param = new Double[] { 12.34D, 43.21D, 8.8D };
-        Object[] result = parser.parse(JSON.toJSONString(param));
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.length, 1);
-        Assert.assertTrue(result[0] instanceof List);
-
-        List<?> list = (List<?>) result[0];
-        int index = 0;
-        for (Object item : list) {
-            Assert.assertNotNull(item);
-            Assert.assertEquals(item, param[index]);
-            index++;
-        }
+        testSingleListParam(parser, Arrays.asList(new Double[] { 12.34D, 43.21D, 8.8D }));
     }
 
     @Test
@@ -164,47 +114,43 @@ public class CollectionMethodParametersParserTest extends AbstractMethodParamete
             testInfo.setDd(i + 0.5);
             testInfos.add(testInfo);
         }
-        Object[] result = parser.parse(JSON.toJSONString(testInfos));
 
+        testSingleListParam(parser, testInfos);
+    }
+    
+    private void testSingleListParam(MethodParametersParser parser, List<?> param) {
+        
+        String json = JSON.toJSONString(param);
+
+        // 参数格式：[]
+        Object[] result = parser.parse(json);
+        assertListResult(result, param);
+        
+        // 参数格式：{'list': []}
+        result = parser.parse("{'list': " + json + "}");
+        assertListResult(result, param);
+    }
+        
+    private void assertListResult(Object[] result, List<?> param) {
+        
         Assert.assertNotNull(result);
         Assert.assertEquals(result.length, 1);
         Assert.assertTrue(result[0] instanceof List);
-
-        List<?> list = (List<?>) result[0];
-        int index = 0;
-        for (Object item : list) {
-
-            Assert.assertNotNull(item);
-            Assert.assertTrue(item instanceof TestInfo);
-
-            TestInfo testInfo = (TestInfo) item;
-            Assert.assertEquals(testInfo.getS(), testInfos.get(index).getS());
-            Assert.assertEquals(testInfo.getI(), testInfos.get(index).getI());
-            Assert.assertEquals(testInfo.getDd(), testInfos.get(index).getDd());
-            index++;
-        }
+        Assert.assertEquals(result[0], param);
     }
 
     @Test
-    public void testSingleSet() {
+    public void testSingleObjectSet() {
 
         DefaultMethodParametersParserFactory factory = DefaultMethodParametersParserFactory.getInstance();
 
-        Method method = lookupMethod("singleSet");
+        Method method = lookupMethod("singleObjectSet");
         MethodParametersParser parser = factory.getMethodParametersParser(method);
 
-        Object[] param = new Object[] { "abc", 123, 12.34D, true };
-        Object[] result = parser.parse(JSON.toJSONString(param));
+        // 基本类型Set
+        testSingleSetParam(parser, new HashSet<>(Arrays.asList(new Object[] { "abc", 123, true })));
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.length, 1);
-        Assert.assertTrue(result[0] instanceof Set);
-
-        Set<?> set = (Set<?>) result[0];
-        for (Object item : param) {
-            Assert.assertNotNull(item);
-        }
-
+        // 对象Set
         Set<TestInfo> testInfos = new HashSet<TestInfo>();
         for (int i = 0; i < 5; i++) {
             TestInfo testInfo = new TestInfo();
@@ -214,13 +160,13 @@ public class CollectionMethodParametersParserTest extends AbstractMethodParamete
             testInfos.add(testInfo);
         }
 
-        result = parser.parse(JSON.toJSONString(testInfos));
+        Object[] result = parser.parse(JSON.toJSONString(testInfos));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.length, 1);
         Assert.assertTrue(result[0] instanceof Set);
 
-        set = (Set<?>) result[0];
+        Set<?> set = (Set<?>) result[0];
         for (Object item : set) {
 
             Assert.assertNotNull(item);
@@ -242,17 +188,7 @@ public class CollectionMethodParametersParserTest extends AbstractMethodParamete
         Method method = lookupMethod("singleStringSet");
         MethodParametersParser parser = factory.getMethodParametersParser(method);
 
-        String[] param = new String[] { "abc", "def", "xyz" };
-        Object[] result = parser.parse(JSON.toJSONString(param));
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.length, 1);
-        Assert.assertTrue(result[0] instanceof Set);
-
-        Set<?> set = (Set<?>) result[0];
-        for (Object item : param) {
-            Assert.assertTrue(set.contains(item));
-        }
+        testSingleSetParam(parser, new HashSet<>(Arrays.asList(new String[] { "abc", "def", "xyz" })));
     }
 
     @Test
@@ -263,17 +199,7 @@ public class CollectionMethodParametersParserTest extends AbstractMethodParamete
         Method method = lookupMethod("singleIntegerSet");
         MethodParametersParser parser = factory.getMethodParametersParser(method);
 
-        Integer[] param = new Integer[] { 100, 200, 300 };
-        Object[] result = parser.parse(JSON.toJSONString(param));
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.length, 1);
-        Assert.assertTrue(result[0] instanceof Set);
-
-        Set<?> set = (Set<?>) result[0];
-        for (Object item : param) {
-            Assert.assertTrue(set.contains(item));
-        }
+        testSingleSetParam(parser, new HashSet<>(Arrays.asList(new Integer[] { 100, 200, 300 })));
     }
 
     @Test
@@ -284,17 +210,7 @@ public class CollectionMethodParametersParserTest extends AbstractMethodParamete
         Method method = lookupMethod("singleDoubleSet");
         MethodParametersParser parser = factory.getMethodParametersParser(method);
 
-        Double[] param = new Double[] { 12.34D, 43.21D, 8.8D };
-        Object[] result = parser.parse(JSON.toJSONString(param));
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.length, 1);
-        Assert.assertTrue(result[0] instanceof Set);
-
-        Set<?> set = (Set<?>) result[0];
-        for (Object item : param) {
-            Assert.assertTrue(set.contains(item));
-        }
+        testSingleSetParam(parser, new HashSet<>(Arrays.asList(new Double[] { 12.34D, 43.21D, 8.8D })));
     }
 
     @Test
@@ -313,30 +229,39 @@ public class CollectionMethodParametersParserTest extends AbstractMethodParamete
             testInfo.setDd(i + 0.5);
             testInfos.add(testInfo);
         }
-        Object[] result = parser.parse(JSON.toJSONString(testInfos));
+        
+        testSingleSetParam(parser, testInfos);
+    }
+    
+    private void testSingleSetParam(MethodParametersParser parser, Set<?> param) {
+        
+        String json = JSON.toJSONString(param);
+
+        // 参数格式：[]
+        Object[] result = parser.parse(json);
+        assertSetResult(result, param);
+        
+        // 参数格式：{'list': []}
+        result = parser.parse("{'set': " + json + "}");
+        assertSetResult(result, param);
+    }
+    
+    private void assertSetResult(Object[] result, Set<?> param) {
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.length, 1);
         Assert.assertTrue(result[0] instanceof Set);
 
-        Set<?> list = (Set<?>) result[0];
-        for (Object item : list) {
-
-            Assert.assertNotNull(item);
-            Assert.assertTrue(item instanceof TestInfo);
-
-            TestInfo testInfo = (TestInfo) item;
-            Assert.assertNotNull(testInfo.getS());
-            Assert.assertNotNull(testInfo.getI());
-            Assert.assertNotNull(testInfo.getDd());
+        Set<?> set = (Set<?>) result[0];
+        for (Object item : param) {
+            Assert.assertTrue(set.contains(item));
         }
     }
 }
 
 class CollectionTestService {
 
-    @SuppressWarnings("rawtypes")
-    public void singleList(List list) {
+    public void singleObjectList(List<Object> list) {
     }
 
     public void singleStringList(List<String> list) {
@@ -351,8 +276,7 @@ class CollectionTestService {
     public void singlePojoList(List<TestInfo> list) {
     }
 
-    @SuppressWarnings("rawtypes")
-    public void singleSet(Set set) {
+    public void singleObjectSet(Set<Object> set) {
     }
 
     public void singleStringSet(Set<String> set) {
