@@ -1,10 +1,10 @@
 package com.liuyueqi.method.parameters.parser;
 
+import java.util.List;
 import java.util.Map;
 
 import com.liuyueqi.method.parameters.TypeInfo;
 import com.liuyueqi.method.parameters.util.JsonValueUtils;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 public class ObjectValueParser implements ValueParser {
 

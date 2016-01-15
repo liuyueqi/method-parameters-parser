@@ -66,7 +66,7 @@ public class PojoValueParser implements ValueParser {
     }
 
     private Object parseMap(Map<String, ?> value) {
-
+        
         try {
             
             Class<?> rawType = this.type.getRawType();
