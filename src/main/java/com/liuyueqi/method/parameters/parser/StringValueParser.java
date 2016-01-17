@@ -13,6 +13,6 @@ public class StringValueParser extends BaseValueParser {
 
     @Override
     public Object parse(Object value) {
-        return value;
+        return value == null ? null : value.toString();
     }
 }

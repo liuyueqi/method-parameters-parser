@@ -25,6 +25,8 @@ public class CommonValueParserFactory implements ValueParserFactory {
     private static final ConcurrentHashMap<TypeInfo, PojoValueParser> POJO_VALUE_PARSER_MAP = 
             new ConcurrentHashMap<TypeInfo, PojoValueParser>();
     
+    private static final ObjectValueParser OBJECT_VALUE_PARSER = new ObjectValueParser();
+    
     public static CommonValueParserFactory getInstance() {
         return Holder.INSTANCE;
     }
@@ -38,6 +40,13 @@ public class CommonValueParserFactory implements ValueParserFactory {
         BASE_VALUE_PARSER_MAP.put(TypeInfo.LONG, new LongValueParser());
         BASE_VALUE_PARSER_MAP.put(TypeInfo.SHORT, new ShortValueParser());
         BASE_VALUE_PARSER_MAP.put(TypeInfo.STRING, new StringValueParser());
+
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_BOOLEAN, new BooleanValueParser());
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_BYTE, new ByteValueParser());
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_DOUBLE, new DoubleValueParser());
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_INTEGER, new IntegerValueParser());
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_LONG, new LongValueParser());
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_SHORT, new ShortValueParser());
     }
 
     @Override
@@ -65,6 +74,10 @@ public class CommonValueParserFactory implements ValueParserFactory {
         
         if (TypeInfoUtils.isMap(type)) {
             return lookupMapValueParser(type);
+        }
+        
+        if (Object.class == type.getRawType()) {
+            return OBJECT_VALUE_PARSER;
         }
         
         return lookupPojoValueParser(type);

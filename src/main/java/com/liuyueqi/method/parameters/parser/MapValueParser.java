@@ -12,8 +12,9 @@ import com.liuyueqi.method.parameters.exception.ValueParseException;
 import com.liuyueqi.method.parameters.util.JsonValueUtils;
 
 public class MapValueParser implements ValueParser {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MapValueParser.class);
+    private static final TypeInfo[] SUPPORTED_TYPES = new TypeInfo[0];
 
     private TypeInfo keyGenericType;
     private TypeInfo valueGenericType;
@@ -29,7 +30,7 @@ public class MapValueParser implements ValueParser {
 
     @Override
     public TypeInfo[] support() {
-        return new TypeInfo[0];
+        return SUPPORTED_TYPES;
     }
 
     @Override
@@ -51,7 +52,7 @@ public class MapValueParser implements ValueParser {
         throw new ValueParseException("");
     }
     
-    private Object parserString(String value) {
+    private Map<?, ?> parserString(String value) {
         
         if (!JsonValueUtils.isMap(value)) {
             LOGGER.error(String.format("%s is not a map", value));
@@ -61,7 +62,7 @@ public class MapValueParser implements ValueParser {
         return parseMap(JSON.parseObject(value));
     }
     
-    private Object parseMap(Map<String, ?> value) {
+    private Map<?, ?> parseMap(Map<String, ?> value) {
         
         if (value.isEmpty()) {
             return value;

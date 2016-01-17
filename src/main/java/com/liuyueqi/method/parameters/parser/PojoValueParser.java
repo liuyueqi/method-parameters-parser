@@ -17,6 +17,7 @@ import com.liuyueqi.method.parameters.util.JsonValueUtils;
 public class PojoValueParser implements ValueParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PojoValueParser.class);
+    private static final TypeInfo[] SUPPORTED_TYPES = new TypeInfo[0];
 
     private TypeInfo type;
 
@@ -30,7 +31,7 @@ public class PojoValueParser implements ValueParser {
 
     @Override
     public TypeInfo[] support() {
-        return new TypeInfo[0];
+        return SUPPORTED_TYPES;
     }
 
     @Override
@@ -65,21 +66,29 @@ public class PojoValueParser implements ValueParser {
     }
 
     private Object parseMap(Map<String, ?> value) {
-
+        
         try {
             
             Class<?> rawType = this.type.getRawType();
             Object instance = rawType.newInstance();
             
-            Field[] fields = rawType.getFields();
-            for (Field field : fields) {
+            for (Map.Entry<String, ?> entry : value.entrySet()) {
                 
-                TypeInfo typeInfo = new TypeInfo(field.getGenericType());
-                ValueParser parser = CommonValueParserFactory.getInstance().getValueParser(typeInfo);
-
-                String fieldName = field.getName();
-                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(fieldName, rawType);
-                propertyDescriptor.getWriteMethod().invoke(instance, parser.parse(value.get(fieldName)));
+                try {
+                    
+                    Field field = rawType.getDeclaredField(entry.getKey());
+                    TypeInfo typeInfo = new TypeInfo(field.getGenericType());
+                    
+                    ValueParser parser = CommonValueParserFactory.getInstance().getValueParser(typeInfo);
+                    
+                    PropertyDescriptor propertyDescriptor = new PropertyDescriptor(entry.getKey(), rawType);
+                    propertyDescriptor.getWriteMethod().invoke(instance, parser.parse(entry.getValue()));
+                    
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
             }
             
             return instance;

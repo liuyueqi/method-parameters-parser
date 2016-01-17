@@ -9,7 +9,8 @@ import com.liuyueqi.method.parameters.TypeInfo;
 public class TypeInfoUtils {
 
     public static final Class<?>[] BASE_TYPES = new Class[] { Boolean.class, Byte.class, Double.class, Integer.class,
-            Long.class, Short.class, String.class };
+            Long.class, Short.class, String.class, boolean.class, byte.class, double.class, int.class, long.class,
+            short.class };
 
     public static boolean isBaseType(TypeInfo type) {
 
@@ -51,5 +52,9 @@ public class TypeInfoUtils {
         }
         
         return (Map.class == type.getRawType());
+    }
+    
+    public static boolean isPojo(TypeInfo type) {
+        return !(isBaseType(type) || isList(type) || isSet(type) || isMap(type));
     }
 }
