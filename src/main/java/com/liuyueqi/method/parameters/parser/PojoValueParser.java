@@ -11,12 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.liuyueqi.method.parameters.TypeInfo;
+import com.liuyueqi.method.parameters.exception.PojoInstantiationException;
 import com.liuyueqi.method.parameters.exception.ValueParseException;
+import com.liuyueqi.method.parameters.exception.ValueTypeMismatchException;
 import com.liuyueqi.method.parameters.util.JsonValueUtils;
 
 public class PojoValueParser implements ValueParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PojoValueParser.class);
+    
     private static final TypeInfo[] SUPPORTED_TYPES = new TypeInfo[0];
 
     private TypeInfo type;
@@ -66,45 +69,53 @@ public class PojoValueParser implements ValueParser {
     }
 
     private Object parseMap(Map<String, ?> value) {
-        
+
+        Class<?> rawType = this.type.getRawType();
+
+        Object instance = null;
         try {
-            
-            Class<?> rawType = this.type.getRawType();
-            Object instance = rawType.newInstance();
-            
-            for (Map.Entry<String, ?> entry : value.entrySet()) {
-                
-                try {
-                    
-                    Field field = rawType.getDeclaredField(entry.getKey());
-                    TypeInfo typeInfo = new TypeInfo(field.getGenericType());
-                    
-                    ValueParser parser = CommonValueParserFactory.getInstance().getValueParser(typeInfo);
-                    
-                    PropertyDescriptor propertyDescriptor = new PropertyDescriptor(entry.getKey(), rawType);
-                    propertyDescriptor.getWriteMethod().invoke(instance, parser.parse(entry.getValue()));
-                    
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-                }
-            }
-            
-            return instance;
-            
+            instance = rawType.newInstance();
         } catch (InstantiationException e) {
-            e.printStackTrace();
+            throw new PojoInstantiationException(rawType);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IntrospectionException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            throw new PojoInstantiationException(rawType);
         }
-        
-        return null;
+
+        for (Map.Entry<String, ?> entry : value.entrySet()) {
+
+            TypeInfo typeInfo = null;
+            Object parsedVal = null;
+            try {
+
+                Field field = rawType.getDeclaredField(entry.getKey());
+                typeInfo = new TypeInfo(field.getGenericType());
+
+                ValueParser parser = CommonValueParserFactory.getInstance().getValueParser(typeInfo);
+
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(entry.getKey(), rawType);
+                parsedVal = parser.parse(entry.getValue());
+                propertyDescriptor.getWriteMethod().invoke(instance, parsedVal);
+
+            } catch (NoSuchFieldException e) {
+                LOGGER.warn("Cannot find field: [{}] in type: [{}]", entry.getKey(), rawType);
+                continue;
+            } catch (SecurityException e) {
+                LOGGER.warn("Cannot access field: [{}] in type: [{}]", entry.getKey(), rawType);
+                continue;
+            } catch (IntrospectionException e) {
+                LOGGER.warn("Cannot find getter/setter of field: [{}] in type: [{}]", entry.getKey(), rawType);
+                continue;
+            } catch (IllegalAccessException e) {
+                LOGGER.warn("Cannot access getter/setter of field: [{}] in type: [{}]", entry.getKey(), rawType);
+                continue;
+            } catch (InvocationTargetException e) {
+                LOGGER.warn("Fail to invoke getter/setter of field: [{}] in type: [{}]", entry.getKey(), rawType);
+                continue;
+            } catch (IllegalArgumentException e) {
+                throw new ValueTypeMismatchException(typeInfo.getRawType(), parsedVal);
+            }
+        }
+
+        return instance;
     }
 }
