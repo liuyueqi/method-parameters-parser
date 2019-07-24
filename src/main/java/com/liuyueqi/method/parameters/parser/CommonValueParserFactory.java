@@ -41,12 +41,12 @@ public class CommonValueParserFactory implements ValueParserFactory {
         BASE_VALUE_PARSER_MAP.put(TypeInfo.SHORT, new ShortValueParser());
         BASE_VALUE_PARSER_MAP.put(TypeInfo.STRING, new StringValueParser());
 
-        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_BOOLEAN, new BooleanValueParser());
-        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_BYTE, new ByteValueParser());
-        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_DOUBLE, new DoubleValueParser());
-        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_INTEGER, new IntegerValueParser());
-        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_LONG, new LongValueParser());
-        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_SHORT, new ShortValueParser());
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_BOOLEAN, new PrimitiveBooleanValueParser());
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_BYTE, new PrimitiveByteValueParser());
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_DOUBLE, new PrimitiveDoubleValueParser());
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_INTEGER, new PrimitiveIntegerValueParser());
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_LONG, new PrimitiveLongValueParser());
+        BASE_VALUE_PARSER_MAP.put(TypeInfo.PRIMITIVE_SHORT, new PrimitiveShortValueParser());
     }
 
     @Override

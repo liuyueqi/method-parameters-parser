@@ -199,6 +199,20 @@ public class BaseTypeMethodParametersParserTest extends AbstractMethodParameters
         Assert.assertEquals(result[0], arg1);
         Assert.assertEquals(result[1], arg2);
     }
+
+    @Test
+    public void testSinglePrimitiveInteger() {
+
+        DefaultMethodParametersParserFactory factory = DefaultMethodParametersParserFactory.getInstance();
+
+        Method method = lookupMethod("singlePrimitiveInteger");
+        MethodParametersParser parser = factory.getMethodParametersParser(method);
+
+        Object[] result = parser.parse(null);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.length, 1);
+        Assert.assertEquals(result[0], 0);
+    }
 }
 
 class BaseTypeTestService {
@@ -222,5 +236,8 @@ class BaseTypeTestService {
     }
 
     public void stringAndInteger(String arg1, Integer arg2) {
+    }
+
+    public void singlePrimitiveInteger(int arg1) {
     }
 }

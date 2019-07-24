@@ -59,7 +59,9 @@ public class DefaultMethodParametersParser implements MethodParametersParser {
 
         if (value == null) {
             if (this.methodParameterInfos.length == 1) {
-                return new Object[] { null };
+                ValueParser parser = CommonValueParserFactory.getInstance().getValueParser(
+                        methodParameterInfos[0].getType());
+                return new Object[] { parser.parse(null) };
             }
             return null;
         }

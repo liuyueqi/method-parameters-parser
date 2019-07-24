@@ -11,7 +11,8 @@ public class ValueTypeMismatchException extends ValueParseException {
     private Object value;
 
     public ValueTypeMismatchException(Class<?> type, Object value) {
-        super();
+
+        super(String.format("Cannot parse value: %s as type: %s", value, type));
         this.type = type;
         this.value = value;
     }
